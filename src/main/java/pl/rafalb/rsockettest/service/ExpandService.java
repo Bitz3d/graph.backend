@@ -17,10 +17,12 @@ import java.util.function.Function;
 @Service
 public class ExpandService {
 
+    private final List<Node.NodeMode> EXCLUDED = List.of(Node.NodeMode.START, Node.NodeMode.FINISH, Node.NodeMode.WALL);
+
     public Flux<Node> deepExpand(Graph graph) {
         return Mono.just(graph.getRoot())
                 .expandDeep(expand(graph))
-                .takeUntil(Node::getIsFinish)
+                .takeUntil(node -> Node.NodeMode.FINISH.equals(node.getMode()))
                 .delayElements(Duration.ofMillis(10))
                 .log();
 
@@ -30,13 +32,13 @@ public class ExpandService {
         return Mono.just(graph.getRoot())
                 .expand(expand(graph))
                 .takeUntil(node -> {
-                    if (node.getIsFinish()) {
+                    if (Node.NodeMode.FINISH.equals(node.getMode())) {
                         backtrack(graph, node);
                         return true;
                     }
                     return false;
                 })
-                .delayElements(Duration.ofMillis(10))
+                .delayElements(Duration.ofMillis(1))
                 .log();
 
     }
@@ -48,22 +50,29 @@ public class ExpandService {
     }
 
     private void shortestPath(final Graph graph, final Node node, final List<Node> path) {
-        if (node.getIsStart()) return;
+        if (Node.NodeMode.START.equals(node.getMode())) return;
         List<Node> neighbours = getNeighbours(graph.getGraph(), node);
         Node nearestNode = neighbours
                 .stream()
                 .filter(Node::getIsVisited)
+                .filter(finish -> !Node.NodeMode.FINISH.equals(finish.getMode()))
                 .min(Comparator.comparing(Node::getDistance))
-                .orElseThrow();
-        nearestNode.setIsPath(true);
+                .orElse(null);
+
+        if (nearestNode == null) {
+            return;
+        }
+        if (!EXCLUDED.contains(nearestNode.getMode())) {
+            nearestNode.setMode(Node.NodeMode.PATH);
+        }
         path.add(nearestNode);
         shortestPath(graph, nearestNode, path);
     }
 
     private Function<Node, Publisher<? extends Node>> expand(final Graph graph) {
         return n -> Flux.fromIterable(getNeighbours(graph.getGraph(), n))
-                .filter(h -> !h.getIsWall())
-                .filter(j -> !j.getIsVisited())
+                .filter(node -> !Node.NodeMode.WALL.equals(node.getMode()))
+                .filter(node -> !node.getIsVisited())
                 .map(node -> node.setIsVisited(true).setDistance(n.getDistance() + 1))
                 .flatMap(g -> nextNode(graph, g));
     }

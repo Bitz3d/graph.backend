@@ -27,10 +27,10 @@ class ExpandServiceTest {
         // then
         StepVerifier.create(breadthSearch)
                 .expectNext(
-                        new Node(0, 0, true, false, null, true, false),
-                        new Node(1, 0, true, false, null, true, false),
-                        new Node(0, 0, true, false, null, true, false),
-                        new Node(1, 1, true, true, null, true, false)
+                        new Node(0, 0, null, true, Node.NodeMode.START),
+                        new Node(1, 0, null, true, Node.NodeMode.GROUND),
+                        new Node(0, 0, null, true, Node.NodeMode.GROUND),
+                        new Node(1, 1, null, true, Node.NodeMode.FINISH)
                 )
                 .verifyComplete();
     }
@@ -43,11 +43,11 @@ class ExpandServiceTest {
         // then
         StepVerifier.create(breadthSearch)
                 .expectNext(
-                        new Node(0, 0, true, false, null, true, false),
-                        new Node(1, 0, true, false, null, true, false),
-                        new Node(0, 1, true, false, null, true, false),
-                        new Node(0, 0, true, false, null, true, false),
-                        new Node(1, 1, true, true, null, true, false)
+                        new Node(0, 0, null, true, Node.NodeMode.START),
+                        new Node(1, 0, null, true, Node.NodeMode.GROUND),
+                        new Node(0, 1, null, true, Node.NodeMode.GROUND),
+                        new Node(0, 0, null, true, Node.NodeMode.GROUND),
+                        new Node(1, 1, null, true, Node.NodeMode.FINISH)
                 )
                 .verifyComplete();
     }
@@ -55,15 +55,15 @@ class ExpandServiceTest {
     @Test
     void checkIfWallIsMissed() {
         // given
-        graph.getGraph()[1][0].setIsWall(true);
+        graph.getGraph()[1][0].setMode(Node.NodeMode.WALL);
         Flux<Node> breadthSearch = service.breadthExpand(graph);
         // when
         // then
         StepVerifier.create(breadthSearch)
                 .expectNext(
-                        new Node(0, 0, true, false, null, true, false),
-                        new Node(0, 1, true, false, null, true, false),
-                        new Node(1, 1, true, true, null, true, false)
+                        new Node(0, 0, null, true, Node.NodeMode.START),
+                        new Node(0, 1, null, true, Node.NodeMode.GROUND),
+                        new Node(1, 1, null, true, Node.NodeMode.FINISH)
                 )
                 .verifyComplete();
     }

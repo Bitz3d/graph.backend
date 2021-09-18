@@ -2,6 +2,7 @@ package pl.rafalb.rsockettest.utils;
 
 import pl.rafalb.rsockettest.domain.Graph;
 import pl.rafalb.rsockettest.domain.Node;
+import pl.rafalb.rsockettest.domain.position.Coordinate;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -15,14 +16,13 @@ public class GraphCreatorUtil {
                 graph[i][j] = new Node()
                         .setDistance(0L)
                         .setMode(Node.NodeMode.GROUND)
-                        .setCol(i)
-                        .setRow(j)
+                        .setPosition(new Coordinate(i, j, 0))
                         .setIsVisited(false);
             }
         }
         Node startPoint = createStartPoint(columnLength, nodeLength, graph);
         createFinishPoint(columnLength, nodeLength, graph);
-        return new Graph().setGraph(graph).setRoot(startPoint);
+        return new Graph().setGrade(graph).setRoot(startPoint);
     }
 
     public static Graph fixedGraph() {
@@ -34,15 +34,14 @@ public class GraphCreatorUtil {
                 graph[i][j] = new Node()
                         .setDistance(0L)
                         .setMode(Node.NodeMode.GROUND)
-                        .setCol(i)
-                        .setRow(j)
+                        .setPosition(new Coordinate(i, j, 0))
                         .setIsVisited(false);
             }
         }
         Node startPoint = graph[0][0];
         startPoint.setMode(Node.NodeMode.START);
         graph[1][1].setMode(Node.NodeMode.FINISH);
-        return new Graph().setGraph(graph).setRoot(startPoint);
+        return new Graph().setGrade(graph).setRoot(startPoint);
     }
 
     private static Node createStartPoint(final int columnLength, final int nodeLength, final Node[][] nodes) {

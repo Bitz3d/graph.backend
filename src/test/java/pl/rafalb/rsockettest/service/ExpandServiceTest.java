@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pl.rafalb.rsockettest.domain.Graph;
 import pl.rafalb.rsockettest.domain.Node;
+import pl.rafalb.rsockettest.domain.position.Coordinate;
 import pl.rafalb.rsockettest.utils.GraphCreatorUtil;
 import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
@@ -22,15 +23,15 @@ class ExpandServiceTest {
     @Test
     void deepExpand() {
 // given
-        Flux<Node> breadthSearch = service.deepExpand(graph);
+        Flux<Node> deepExpand = service.deepExpand(graph);
         // when
         // then
-        StepVerifier.create(breadthSearch)
+        StepVerifier.create(deepExpand)
                 .expectNext(
-                        new Node(0, 0, null, true, Node.NodeMode.START),
-                        new Node(1, 0, null, true, Node.NodeMode.GROUND),
-                        new Node(0, 0, null, true, Node.NodeMode.GROUND),
-                        new Node(1, 1, null, true, Node.NodeMode.FINISH)
+                        new Node(new Coordinate(0, 0, 0), 2L, true, Node.NodeMode.START),
+                        new Node(new Coordinate(1, 0, 0), 1L, true, Node.NodeMode.GROUND),
+                        new Node(new Coordinate(0, 1, 0), 1L, true, Node.NodeMode.GROUND),
+                        new Node(new Coordinate(1, 1, 0), 1L, true, Node.NodeMode.FINISH)
                 )
                 .verifyComplete();
     }
@@ -43,11 +44,11 @@ class ExpandServiceTest {
         // then
         StepVerifier.create(breadthSearch)
                 .expectNext(
-                        new Node(0, 0, null, true, Node.NodeMode.START),
-                        new Node(1, 0, null, true, Node.NodeMode.GROUND),
-                        new Node(0, 1, null, true, Node.NodeMode.GROUND),
-                        new Node(0, 0, null, true, Node.NodeMode.GROUND),
-                        new Node(1, 1, null, true, Node.NodeMode.FINISH)
+                        new Node(new Coordinate(0, 0, 0), null, true, Node.NodeMode.START),
+                        new Node(new Coordinate(1, 0, 0), null, true, Node.NodeMode.GROUND),
+                        new Node(new Coordinate(0, 1, 0), null, true, Node.NodeMode.GROUND),
+                        new Node(new Coordinate(0, 0, 0), null, true, Node.NodeMode.GROUND),
+                        new Node(new Coordinate(1, 1, 0), null, true, Node.NodeMode.FINISH)
                 )
                 .verifyComplete();
     }
@@ -55,15 +56,15 @@ class ExpandServiceTest {
     @Test
     void checkIfWallIsMissed() {
         // given
-        graph.getGraph()[1][0].setMode(Node.NodeMode.WALL);
+        graph.getGrade()[1][0].setMode(Node.NodeMode.WALL);
         Flux<Node> breadthSearch = service.breadthExpand(graph);
         // when
         // then
         StepVerifier.create(breadthSearch)
                 .expectNext(
-                        new Node(0, 0, null, true, Node.NodeMode.START),
-                        new Node(0, 1, null, true, Node.NodeMode.GROUND),
-                        new Node(1, 1, null, true, Node.NodeMode.FINISH)
+                        new Node(new Coordinate(0, 0, 0), null, true, Node.NodeMode.START),
+                        new Node(new Coordinate(0, 1, 0), null, true, Node.NodeMode.GROUND),
+                        new Node(new Coordinate(1, 1, 0), null, true, Node.NodeMode.FINISH)
                 )
                 .verifyComplete();
     }

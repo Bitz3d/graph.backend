@@ -22,7 +22,7 @@ class BreadthFirstSearchPublisherTest {
         CountDownLatch latch = new CountDownLatch(1);
         Graph graph = GraphCreatorUtil.randomGraph();
         List<String> observableSignals = new ArrayList<>();
-        BreathFirstSearchPublisher<Node[][]> publisher = new BreathFirstSearchPublisher(graph.getGraph());
+        BreathFirstSearchPublisher<Node[][]> publisher = new BreathFirstSearchPublisher(graph.getGrade());
         publisher.subscribe(new Subscriber() {
             @Override
             public void onSubscribe(final Subscription subscription) {

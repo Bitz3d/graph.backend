@@ -78,17 +78,17 @@ public class ExpandService {
     private List<Node> getNeighbours(final Node[][] graph, Node processNode) {
         List<Node> neighbors = new ArrayList<>();
 
-        if (!outOfBoundPosition(graph, processNode.getPosition().getX() + 1, processNode.getPosition().getY())) {
-            neighbors.add(graph[processNode.getPosition().getX() + 1][processNode.getPosition().getY()]);
+        if (!outOfBoundPosition(graph, Math.round(processNode.getPosition().getX()) + 1, Math.round(processNode.getPosition().getY()))) {
+            neighbors.add(graph[Math.round(processNode.getPosition().getX()) + 1][Math.round(processNode.getPosition().getY())]);
         }
-        if (!outOfBoundPosition(graph, processNode.getPosition().getX() - 1, processNode.getPosition().getY())) {
-            neighbors.add(graph[processNode.getPosition().getX() - 1][processNode.getPosition().getY()]);
+        if (!outOfBoundPosition(graph, Math.round(processNode.getPosition().getX()) - 1, Math.round(processNode.getPosition().getY()))) {
+            neighbors.add(graph[Math.round(processNode.getPosition().getX()) - 1][Math.round(processNode.getPosition().getY())]);
         }
-        if (!outOfBoundPosition(graph, processNode.getPosition().getX(), processNode.getPosition().getY() + 1)) {
-            neighbors.add(graph[processNode.getPosition().getX()][processNode.getPosition().getY() + 1]);
+        if (!outOfBoundPosition(graph, Math.round(processNode.getPosition().getX()), Math.round(processNode.getPosition().getY()) + 1)) {
+            neighbors.add(graph[Math.round(processNode.getPosition().getX())][Math.round(processNode.getPosition().getY()) + 1]);
         }
-        if (!outOfBoundPosition(graph, processNode.getPosition().getX(), processNode.getPosition().getY() - 1)) {
-            neighbors.add(graph[processNode.getPosition().getX()][processNode.getPosition().getY() - 1]);
+        if (!outOfBoundPosition(graph, Math.round(processNode.getPosition().getX()), Math.round(processNode.getPosition().getY()) - 1)) {
+            neighbors.add(graph[Math.round(processNode.getPosition().getX())][Math.round(processNode.getPosition().getY()) - 1]);
         }
         return neighbors;
     }
@@ -101,7 +101,7 @@ public class ExpandService {
 
 
     private Mono<Node> nextNode(Graph graph, final Node nodeRef) {
-        return Mono.just(graph.getGrade()[nodeRef.getPosition().getX()][nodeRef.getPosition().getY()]);
+        return Mono.just(graph.getGrade()[Math.round(nodeRef.getPosition().getX())][Math.round(nodeRef.getPosition().getY())]);
     }
 
 
